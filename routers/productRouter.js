@@ -1,18 +1,11 @@
 const express = require("express")
 const productRouter = express.Router()
+const { addProductHandler, getProductsHandler, getSingleProduct, updateProduct, deleteProduct } = require("../controllers/productControllers")
 
-productRouter.get("/", (req, res) => {
-    return res.status(200).json({
-        status: "success",
-        message: "all products fetched!"
-    })
-})
-
-productRouter.patch("/:id/pol", (req, res) => {
-    return res.status(200).json({
-        status: "success",
-        message: "all products fetched updatedsgsgsgsg!"
-    })
-})
+productRouter.post("/", addProductHandler)
+productRouter.get("/", getProductsHandler)
+productRouter.get("/:productId", getSingleProduct)
+productRouter.patch("/:productId", updateProduct)
+productRouter.delete("/:productId", deleteProduct)
 
 module.exports = productRouter

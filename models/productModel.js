@@ -26,7 +26,8 @@ const productSchema = new mongoose.Schema({
     },
     inStock: {
         type: Boolean,
-        required: true
+        required: true,
+        // select: false
     },
     seller: {
         type: mongoose.Schema.Types.ObjectId,

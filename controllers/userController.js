@@ -22,6 +22,30 @@ const addUserHandler = async (req, res) => {
     }
 }
 
+// GET ALL USERS
+const getUsersHandler = async (req, res) => {
+    try {
+        const users = await userModel.find()
+        if (!users) {
+            return res.status(400).json({
+                status: "error",
+                message: "Unable to fetch users"
+            })
+        }
+
+        res.status(200).json({
+            status: "success",
+            message: "all users fetched",
+            users
+        })
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
 module.exports = {
-    addUserHandler
+    addUserHandler,
+    getUsersHandler
 }

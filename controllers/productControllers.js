@@ -44,11 +44,57 @@ const getProductsHandler = async (req, res) => {
     }
 }
 
+const searchSortFilterProducts = async (req, res) => {
+    try {
+        const { search, minPrice, maxPrice } = req.query
+
+        const query = {}
+        if (search) {
+            query.$or = [
+                { name: new RegExp(search) }, // Nike Shoe // NIKE SHIE
+                { description: new RegExp(search) }
+            ]
+        }
+
+        if (minPrice) {
+            query.price = {
+                $gte: minPrice
+            }
+        }
+
+        if (maxPrice) {
+            query.price = {
+                $lte: maxPrice
+            }
+        }
+
+        const products = await productModel.find(query)
+        if (!products) {
+            return res.status(400).json({
+                status: "error",
+                message: "Unable to fetch products"
+            })
+        }
+
+        res.status(200).json({
+            status: "success",
+            message: "all products fetched",
+            count: products.length,
+            products
+        })
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 // GET SINGLE PRODUCT
 const getSingleProduct = async (req, res) => {
     const { productId } = req.params
     try {
-        const product = await productModel.findById(productId).populate("seller", "name email companyName")
+        // const product = await productModel.findById(productId).populate("seller", "name email companyName").select(["inStock"])
+        const product = await productModel.findById(productId).populate("seller", "name email companyName").select("+inStock -category")
+
         if (!product) {
             return res.status(400).json({
                 status: "error",
@@ -124,5 +170,6 @@ module.exports = {
     getProductsHandler,
     getSingleProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    searchSortFilterProducts
 }

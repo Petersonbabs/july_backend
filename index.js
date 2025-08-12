@@ -1,14 +1,18 @@
 const express = require("express")
 const app = express()
+const cors = require("cors")
 const connectTodDb = require("./config/connectToDb")
 connectTodDb()
 // MVC + R = MODEL, VIEW, CONTROLLER, ROUTES
 
+// AUTHENTICATION & AUTHORIZATION
+
 const productRouter = require("./routers/productRouter")
 const userRouter = require("./routers/userRouter")
 const cartRouter = require("./routers/cartRouter")
-app.use(express.json())
 
+app.use(express.json())
+app.use(cors())
 
 // middlewareFunction
 

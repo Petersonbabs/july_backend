@@ -1,22 +1,68 @@
 const userModel = require("../models/userModel")
+const bcrypt = require("bcryptjs")
+const jwt = require('jsonwebtoken')
 
-const addUserHandler = async (req, res) => {
-    // console.log(req.body)
+const signUpHandler = async (req, res) => {
+    const { password } = req.body
     try {
-        const user = await userModel.create(req.body)
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
+        const user = await userModel.create({ ...req.body, password: hashedPassword })
+        const result = {
+            name: user.name,
+            email: user.email,
+            companyName: user.companyName
+        }
         if (!user) {
-            return res.status(400).json({
+            return res.staus(400).json({
                 status: "error",
-                message: "user not created"
+                message: "Unable to create user"
             })
         }
 
         return res.status(201).json({
             status: "success",
-            message: "user added successfully",
-            user
+            message: "User created successfully",
+            user: result
+        })
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+const login = async (req, res) => {
+    const { email, password } = req.body
+    try {
+        // VERIFY THE EMAIL
+        const user = await userModel.findOne({ email }).select("+password")
+        if (!user) {
+            return res.status(404).json({
+                status: "error",
+                message: "Email or password is incorrect"
+            })
+        }
+
+        // VERIFY THE PASSWORD
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.status(404).json({
+                status: "error",
+                message: "Email or password is incorrect"
+            })
+        }
+
+        // GENERTE ACCESS TOKEN
+        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_SECRET_EXP
         })
 
+        return res.status(200).json({
+            status: "success",
+            message: "Login successful",
+            token
+        })
+        
     } catch (error) {
         console.log(error)
     }
@@ -46,6 +92,7 @@ const getUsersHandler = async (req, res) => {
 
 
 module.exports = {
-    addUserHandler,
+    signUpHandler,
+    login,
     getUsersHandler
 }

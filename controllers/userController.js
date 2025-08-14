@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel")
 const bcrypt = require("bcryptjs")
 const jwt = require('jsonwebtoken')
+const blacklistedTokenModel = require("../models/blacklistedToken")
 
 const signUpHandler = async (req, res) => {
     const { password } = req.body
@@ -62,7 +63,26 @@ const login = async (req, res) => {
             message: "Login successful",
             token
         })
-        
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const logout = async (req, res) => {
+    const { token } = req.body
+    if (!token) {
+        return res.status(400).json({
+            status: "error",
+            message: "Token is required"
+        })
+    }
+    try {
+        await blacklistedTokenModel.create({ token })
+        return res.status(200).json({
+            status: "success",
+            message: "Logged out successfully!"
+        })
     } catch (error) {
         console.log(error)
     }
@@ -70,6 +90,7 @@ const login = async (req, res) => {
 
 // GET ALL USERS
 const getUsersHandler = async (req, res) => {
+    console.log(req.middleware1)
     try {
         const users = await userModel.find()
         if (!users) {
@@ -94,5 +115,6 @@ const getUsersHandler = async (req, res) => {
 module.exports = {
     signUpHandler,
     login,
-    getUsersHandler
+    getUsersHandler,
+    logout
 }

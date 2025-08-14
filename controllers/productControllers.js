@@ -2,6 +2,7 @@ const productModel = require("../models/productModel")
 
 const addProductHandler = async (req, res) => {
     // console.log(req.body)
+    console.log(req.user)
     try {
         const product = await productModel.create(req.body)
         if (!product) {

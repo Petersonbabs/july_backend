@@ -20,6 +20,25 @@ const userSchema = new mongoose.Schema({
     },
     companyName: {
         type: String,
+    },
+    role: {
+        type: String,
+        default: "user",
+        enum: ['user', 'admin', 'seller']
+    },
+    verified: {
+        type: Boolean,
+        default: false
+    },
+    subscription: {
+        type: String,
+        default: "INACTIVE",
+        enum: ["ACTIVE", 'INACTIVE'],
+    },
+    subscriptionPlan: {
+        type: String,
+        default: 'free',
+        enum: ['free', 'basic', 'premium']
     }
 })
 

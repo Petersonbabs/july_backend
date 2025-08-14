@@ -1,8 +1,11 @@
 const express = require("express")
 const productRouter = express.Router()
 const { addProductHandler, getProductsHandler, getSingleProduct, updateProduct, deleteProduct, searchSortFilterProducts } = require("../controllers/productControllers")
+const isLoggedIn = require("../middlewares/isLoggedIn")
+const isAdmin = require("../middlewares/isAdmin")
 
-productRouter.post("/", addProductHandler)
+productRouter.post("/", isLoggedIn, isAdmin, addProductHandler)
+
 productRouter.get("/", getProductsHandler)
 productRouter.get("/search", searchSortFilterProducts)
 productRouter.get("/:productId", getSingleProduct)

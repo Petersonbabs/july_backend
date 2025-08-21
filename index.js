@@ -13,7 +13,7 @@ const productRouter = require("./routers/productRouter")
 const userRouter = require("./routers/userRouter")
 const cartRouter = require("./routers/cartRouter")
 
-app.use(express.json()) // allow json data
+app.use(express.json())
 app.use(cors())
 
 

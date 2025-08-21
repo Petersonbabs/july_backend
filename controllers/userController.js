@@ -2,13 +2,25 @@ const userModel = require("../models/userModel")
 const bcrypt = require("bcryptjs")
 const jwt = require('jsonwebtoken')
 const blacklistedTokenModel = require("../models/blacklistedToken")
+const generateRandomString = require("../utils/generateRandomString")
+const sendEmail = require("../utils/sendEmail")
 
 const signUpHandler = async (req, res) => {
     const { password } = req.body
     try {
         const salt = await bcrypt.genSalt(10)
+        // hashedPass
         const hashedPassword = await bcrypt.hash(password, salt)
-        const user = await userModel.create({ ...req.body, password: hashedPassword })
+        // generate random token
+        const verificationToken = generateRandomString()
+        // generate verification expiration
+        const verificationExp = Date.now() + 3600000 // the next 1 hr
+        // save user to DB
+        const user = await userModel.create({ ...req.body, password: hashedPassword, verificationExp, verificationToken })
+        // send verification email to user
+        sendEmail(user.email, user.name, verificationToken)
+
+
         const result = {
             name: user.name,
             email: user.email,
@@ -111,10 +123,45 @@ const getUsersHandler = async (req, res) => {
     }
 }
 
+// VERIFY ACCOUNT
+const verifyyAccount = async (req, res) => {
+    // collect the token
+    const { token } = req.params
+    try {
+        // find the user with the token
+        const user = await userModel.findOne({ verificationToken: token })
+        if (!user) {
+            return res.status(404).json({
+                status: "error",
+                message: "This token is either invalid or has been verified"
+            })
+        }
+
+        // check expiration
+        if (user.verificationExp < Date.now()) {
+            return res.status(400).json({
+                status: "error",
+                message: "Token has expired. Kindly request for verification again"
+            })
+        }
+
+        // update the user token and exp to null
+        await userModel.findOneAndUpdate(user._id, { verificationExp: null, verificationToken: null, verified: true })
+        res.status(200).json({
+            status: "success",
+            message: "Account verified successfully"
+        })
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 module.exports = {
     signUpHandler,
     login,
     getUsersHandler,
-    logout
+    logout,
+    verifyyAccount
 }

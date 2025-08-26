@@ -5,7 +5,7 @@ const blacklistedTokenModel = require("../models/blacklistedToken")
 const generateRandomString = require("../utils/generateRandomString")
 const sendEmail = require("../utils/sendEmail")
 
-const signUpHandler = async (req, res) => {
+const signUpHandler = async (req, res, next) => {
     const { password } = req.body
     try {
         const salt = await bcrypt.genSalt(10)
@@ -40,6 +40,7 @@ const signUpHandler = async (req, res) => {
         })
     } catch (error) {
         console.log(error)
+        next(error)
     }
 
 }

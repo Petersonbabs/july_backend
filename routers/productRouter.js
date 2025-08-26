@@ -4,7 +4,7 @@ const { addProductHandler, getProductsHandler, getSingleProduct, updateProduct, 
 const isLoggedIn = require("../middlewares/isLoggedIn")
 const isAdmin = require("../middlewares/isAdmin")
 
-productRouter.post("/", isLoggedIn, isAdmin, addProductHandler)
+productRouter.post("/", isLoggedIn, addProductHandler)
 
 productRouter.get("/", getProductsHandler)
 productRouter.get("/search", searchSortFilterProducts)

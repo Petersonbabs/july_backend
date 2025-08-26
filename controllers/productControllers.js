@@ -24,7 +24,7 @@ const addProductHandler = async (req, res) => {
 }
 
 // GET ALL PRODUCTS
-const getProductsHandler = async (req, res) => {
+const getProductsHandler = async (req, res, next) => {
     try {
         const products = await productModel.find()
         if (!products) {
@@ -42,6 +42,7 @@ const getProductsHandler = async (req, res) => {
 
     } catch (error) {
         console.log(error)
+        next(error)
     }
 }
 
@@ -90,7 +91,7 @@ const searchSortFilterProducts = async (req, res) => {
 }
 
 // GET SINGLE PRODUCT
-const getSingleProduct = async (req, res) => {
+const getSingleProduct = async (req, res, next) => {
     const { productId } = req.params
     try {
         // const product = await productModel.findById(productId).populate("seller", "name email companyName").select(["inStock"])
@@ -110,6 +111,7 @@ const getSingleProduct = async (req, res) => {
         })
     } catch (error) {
         console.log(error)
+        next(error)
     }
 }
 

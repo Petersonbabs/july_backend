@@ -4,14 +4,10 @@ const cors = require("cors")
 const connectTodDb = require("./config/connectToDb")
 connectTodDb()
 
-// wrong endpoint
-// error handler middleware
-// duplicate
-// cast error
-// validation 
+// clodinary => cloundName, apiKey, apiSecret
+// multer
+// multer-storage-cloudinary
 
-// jwt expired
-// jwt malformed
 
 require("./config/nodemailerTransporter")
 
@@ -23,6 +19,7 @@ const userRouter = require("./routers/userRouter")
 const cartRouter = require("./routers/cartRouter")
 const errorHandler = require("./middlewares/errorHandler")
 
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
 

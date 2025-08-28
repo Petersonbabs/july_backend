@@ -3,8 +3,10 @@ const productRouter = express.Router()
 const { addProductHandler, getProductsHandler, getSingleProduct, updateProduct, deleteProduct, searchSortFilterProducts } = require("../controllers/productControllers")
 const isLoggedIn = require("../middlewares/isLoggedIn")
 const isAdmin = require("../middlewares/isAdmin")
+const productImageUpload = require("../middlewares/productMedia")
 
-productRouter.post("/", isLoggedIn, addProductHandler)
+
+productRouter.post("/", isLoggedIn, productImageUpload.single("image"), addProductHandler)
 
 productRouter.get("/", getProductsHandler)
 productRouter.get("/search", searchSortFilterProducts)

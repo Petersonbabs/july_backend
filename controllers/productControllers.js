@@ -2,9 +2,16 @@ const productModel = require("../models/productModel")
 
 const addProductHandler = async (req, res) => {
     // console.log(req.body)
-    console.log(req.user)
+    const userId = req.user._id
+    const file = req.file
+    if (!file) {
+        return res.status(400).json({
+            status: "error",
+            message: "file not found"
+        })
+    }
     try {
-        const product = await productModel.create(req.body)
+        const product = await productModel.create({ ...req.body, seller: userId, image: file.path })
         if (!product) {
             return res.status(400).json({
                 status: "error",

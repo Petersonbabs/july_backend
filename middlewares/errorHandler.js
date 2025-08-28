@@ -29,7 +29,7 @@ const handleDuplicate = (err) => {
 }
 
 const errorHandler = (err, req, res, next) => {
-    console.log(err.code)
+    console.log(err)
     if (err.code === 11000) {
         const error = handleDuplicate(err)
         res.status(error.statusCode).json({
@@ -44,7 +44,7 @@ const errorHandler = (err, req, res, next) => {
         })
     } else {
         res.status(500).json({
-            status: "error",    
+            status: "error",
             message: "something went wrong"
         })
     }
